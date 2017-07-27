@@ -21,7 +21,7 @@ import com.qcloud.cos.region.Region;
 
 public class TestFile {
 	
-	String appid = "1251668577";
+    String appid = "1251668577";
     String secret_id = "AKIDrbAYjEBqqdEconpFi8NPFsOjrnX4LYUE";
     String secret_key = "gCYjhT4ThiXAbp4aw65sTs56vY2Kcooc";
     String bucketName = "burningsouth";
@@ -30,7 +30,7 @@ public class TestFile {
     /**
      * upload/download/head/delete 256K file object
      */
-	@Test(invocationCount=1000,threadPoolSize=50,timeOut=30000)
+	@Test(invocationCount=6,threadPoolSize=3,timeOut=30000)
 	public void test256KFile(){
 		try {
 	        COSCredentials cred = new BasicCOSCredentials(appid, secret_id, secret_key);
@@ -75,7 +75,7 @@ public class TestFile {
 	/**
      * upload/download/head/delete 4M file object
      */
-	@Test(invocationCount=1000,threadPoolSize=20,timeOut=60000)
+	@Test(invocationCount=6,threadPoolSize=3,timeOut=60000)
 	public void test4MFile(){
 		try {
 	        COSCredentials cred = new BasicCOSCredentials(appid, secret_id, secret_key);
@@ -120,7 +120,7 @@ public class TestFile {
 	/**
      * upload/download/head/delete 100M file object
      */
-	@Test(invocationCount=100,threadPoolSize=1,timeOut=240000)
+	@Test(invocationCount=4,threadPoolSize=1,timeOut=240000)
 	public void test100MFile(){
 		try {
 	        COSCredentials cred = new BasicCOSCredentials(appid, secret_id, secret_key);
@@ -175,51 +175,6 @@ public class TestFile {
 	        String prefix = "cos1Gfile";
 	        String suffix = ".txt";
 	        File localFile = createSampleFile(prefix,suffix,directory,1024*1024*1024);
-	        String key = localFile.getName();
-	        //upload object
-	        PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, key, localFile);
-	        PutObjectResult putObjectResult = cosClient.putObject(putObjectRequest);
-	        localFile.deleteOnExit();
-	        //download object
-	        File downFile = new File(localDirectory+localFile.getName()+"_download");
-	        GetObjectRequest getObjectRequest = new GetObjectRequest(bucketName, key);
-	        ObjectMetadata downObjectMeta = cosClient.getObject(getObjectRequest, downFile);
-	        downFile.deleteOnExit();
-	        if(putObjectResult.getETag().equals(downObjectMeta.getETag())){
-	        	assert true;
-	        }else{
-	        	assert false;
-	        }
-	        // head object
-	        GetObjectMetadataRequest getObjectMetadataRequest =
-	                new GetObjectMetadataRequest(bucketName, key);
-	        ObjectMetadata statObjectMeta = cosClient.getObjectMetadata(getObjectMetadataRequest);
-	        if(statObjectMeta.getETag().equals(putObjectResult.getETag())){
-	        	assert true;
-	        }else{
-	        	assert false;
-	        }
-	        //delete object
-	        DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucketName, key);
-	        cosClient.deleteObject(deleteObjectRequest);
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
-	}
-	
-	/**
-     * upload/download/head/delete 2G file object
-     */
-	@Test(invocationCount=1,threadPoolSize=1)
-	public void test2GFile(){
-		try {
-	        COSCredentials cred = new BasicCOSCredentials(appid, secret_id, secret_key);
-	        ClientConfig clientConfig = new ClientConfig(new Region("cn-south"));
-	        COSClient cosClient = new COSClient(cred, clientConfig);
-	        File directory = new File(localDirectory);
-	        String prefix = "cos2Gfile";
-	        String suffix = ".txt";
-	        File localFile = createSampleFile(prefix,suffix,directory,2*1024*1024*1024);
 	        String key = localFile.getName();
 	        //upload object
 	        PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, key, localFile);
