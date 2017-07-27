@@ -30,7 +30,7 @@ public class TestFile {
     /**
      * upload/download/head/delete 256K file object
      */
-	@Test(invocationCount=6,threadPoolSize=3,timeOut=30000)
+	@Test(invocationCount=6,threadPoolSize=3)
 	public void test256KFile(){
 		try {
 	        COSCredentials cred = new BasicCOSCredentials(appid, secret_id, secret_key);
@@ -75,7 +75,7 @@ public class TestFile {
 	/**
      * upload/download/head/delete 4M file object
      */
-	@Test(invocationCount=6,threadPoolSize=3,timeOut=60000)
+	@Test(invocationCount=6,threadPoolSize=3)
 	public void test4MFile(){
 		try {
 	        COSCredentials cred = new BasicCOSCredentials(appid, secret_id, secret_key);
@@ -120,7 +120,7 @@ public class TestFile {
 	/**
      * upload/download/head/delete 100M file object
      */
-	@Test(invocationCount=4,threadPoolSize=1,timeOut=240000)
+	@Test(invocationCount=4,threadPoolSize=1)
 	public void test100MFile(){
 		try {
 	        COSCredentials cred = new BasicCOSCredentials(appid, secret_id, secret_key);
