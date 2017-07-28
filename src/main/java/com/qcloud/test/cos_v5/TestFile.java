@@ -25,7 +25,7 @@ public class TestFile {
     String secret_id = "AKIDrbAYjEBqqdEconpFi8NPFsOjrnX4LYUE";
     String secret_key = "gCYjhT4ThiXAbp4aw65sTs56vY2Kcooc";
     String bucketName = "burningsouth";
-    String localDirectory = "/data/burning/data/";
+    String localDirectory = "E:\\test\\testcos\\";
 	
     /**
      * upload/download/head/delete 256K file object
