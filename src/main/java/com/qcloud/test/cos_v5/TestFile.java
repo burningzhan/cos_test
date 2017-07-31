@@ -208,6 +208,57 @@ public class TestFile {
 	}
 	
 	/**
+     * multipart upload
+     */
+	@Test(invocationCount=1,threadPoolSize=1)
+	public void testMultipartUploadFile(){
+		try {
+	        COSCredentials cred = new BasicCOSCredentials(appid, secret_id, secret_key);
+	        ClientConfig clientConfig = new ClientConfig(new Region("cn-south"));
+	        COSClient cosClient = new COSClient(cred, clientConfig);
+	        File directory = new File(localDirectory);
+	        String prefix = "multipartfile";
+	        String suffix = ".txt";
+	        File localFile = createSampleFile(prefix,suffix,directory,100*1024*1024);
+	        String key = localFile.getName();
+	        //multipart upload object
+	        TransferManager transferManager = new TransferManager(cosClient);
+	        Upload upload = transferManager.upload(bucketName, key, localFile);
+	        // 等待传输结束
+	        upload.waitForCompletion();
+	        UploadResult uploadResult = upload.waitForUploadResult();
+	        transferManager.shutdownNow();
+//	        System.out.println(uploadResult.getETag());
+	        localFile.deleteOnExit();
+	        //download object
+	        File downFile = new File(localDirectory+localFile.getName()+"_download");
+	        GetObjectRequest getObjectRequest = new GetObjectRequest(bucketName, key);
+	        ObjectMetadata downObjectMeta = cosClient.getObject(getObjectRequest, downFile);
+//	        System.out.println(downObjectMeta.getETag());
+	        downFile.deleteOnExit();
+	        if(downObjectMeta.getETag().equals(uploadResult.getETag())){
+	        	assert true;
+	        }else{
+	        	assert false;
+	        }
+	        // head object
+	        GetObjectMetadataRequest getObjectMetadataRequest =
+	                new GetObjectMetadataRequest(bucketName, key);
+	        ObjectMetadata statObjectMeta = cosClient.getObjectMetadata(getObjectMetadataRequest);
+	        if(statObjectMeta.getETag().equals(uploadResult.getETag())){
+	        	assert true;
+	        }else{
+	        	assert false;
+	        }
+	        //delete object
+	        DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucketName, key);
+	        cosClient.deleteObject(deleteObjectRequest);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+	}
+	
+	/**
      * Creates a temporary file with text data to demonstrate uploading a file
      * to COS
      *
