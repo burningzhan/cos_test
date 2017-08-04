@@ -37,6 +37,9 @@ public class TestFile {
     String secret_id = "AKIDrbAYjEBqqdEconpFi8NPFsOjrnX4LYUE";
     String secret_key = "gCYjhT4ThiXAbp4aw65sTs56vY2Kcooc";
     String bucketName = "burningsouth";
+    Region region = new Region("cn-south");
+    String sourceBucket = "burningeast";
+    Region sourceRegion = new Region("cn-east");
     String localDirectory = "E:\\test\\testcos\\";
 	
     /**
@@ -331,6 +334,117 @@ public class TestFile {
 			}catch(Exception e) {
 				// TODO: handle exception
 			}
+	}
+	
+	/**
+	 * put object copy(same region)
+	 */
+	@Test(invocationCount=1,threadPoolSize=1)
+	public void testPutObjectCopySameRegion(){
+		try {
+	        COSCredentials cred = new BasicCOSCredentials(appid, secret_id, secret_key);
+	        ClientConfig clientConfig = new ClientConfig(new Region("cn-south"));
+	        COSClient cosClient = new COSClient(cred, clientConfig);
+	        File directory = new File(localDirectory);
+	        String prefix = "cosfileforcopy";
+	        String suffix = ".txt";
+	        File localFile = createSampleFile(prefix,suffix,directory,1*1024*1024);
+	        String key = localFile.getName();
+	        //upload object
+	        PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, key, localFile);
+	        PutObjectResult putObjectResult = cosClient.putObject(putObjectRequest);
+	        localFile.deleteOnExit();
+	        //head object
+	        GetObjectMetadataRequest getObjectMetadataRequest =
+	                new GetObjectMetadataRequest(bucketName, key);
+	        ObjectMetadata statObjectMeta = cosClient.getObjectMetadata(getObjectMetadataRequest);
+	        System.out.println(statObjectMeta.getETag());
+	        if(statObjectMeta.getETag().equals(putObjectResult.getETag())){
+	        	assert true;
+	        }else{
+	        	assert false;
+	        }
+	        //put object copy
+	        String key2copy = key + "_copy";
+	        CopyObjectRequest copyObjectRequest = new CopyObjectRequest(bucketName, key, bucketName, key2copy);
+	        CopyObjectResult copyResult = cosClient.copyObject(copyObjectRequest);
+	        if(copyResult.getETag().equals(statObjectMeta.getETag())){
+	        	assert true;
+	        }else{
+	        	assert false;
+	        }
+	        
+	        //head copy object
+	        getObjectMetadataRequest.setKey(key2copy);
+	        ObjectMetadata statObjectMeta_copy = cosClient.getObjectMetadata(getObjectMetadataRequest);
+	        System.out.println(statObjectMeta_copy.getETag());
+	        
+	        //delete object
+	        DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucketName, key);
+	        cosClient.deleteObject(deleteObjectRequest);
+	        
+	        //delete copy object
+	        deleteObjectRequest.setKey(key2copy);
+	        cosClient.deleteObject(deleteObjectRequest);
+	        cosClient.shutdown();
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+	}
+	
+	/**
+	 * put object copy(diff region)
+	 */
+	@Test(invocationCount=1,threadPoolSize=1)
+	public void testPutObjectCopySh2Gz(){
+		try {
+	        COSCredentials cred = new BasicCOSCredentials(appid, secret_id, secret_key);
+	        ClientConfig clientConfig_source = new ClientConfig(sourceRegion);
+	        COSClient cosClient_source = new COSClient(cred, clientConfig_source);
+	        ClientConfig clientConfig_dest = new ClientConfig(region);
+	        COSClient cosClient_dest = new COSClient(cred, clientConfig_dest);
+	        File directory = new File(localDirectory);
+	        String prefix = "cosfileforcopy_sh_";
+	        String suffix = ".txt";
+	        File localFile = createSampleFile(prefix,suffix,directory,4*1024*1024);
+	        String key = localFile.getName();
+	        //upload object
+	        PutObjectRequest putObjectRequest = new PutObjectRequest(sourceBucket, key, localFile);
+	        PutObjectResult putObjectResult = cosClient_source.putObject(putObjectRequest);
+	        localFile.deleteOnExit();
+	        //head object
+	        GetObjectMetadataRequest getObjectMetadataRequest =
+	                new GetObjectMetadataRequest(sourceBucket, key);
+	        ObjectMetadata statObjectMeta = cosClient_source.getObjectMetadata(getObjectMetadataRequest);
+	        System.out.println(statObjectMeta.getETag());
+	        if(statObjectMeta.getETag().equals(putObjectResult.getETag())){
+	        	assert true;
+	        }else{
+	        	assert false;
+	        }
+	        //put object copy
+	        String key2copy = key + "_copy";
+	        CopyObjectRequest copyObjectRequest = new CopyObjectRequest(sourceRegion, sourceBucket, key, bucketName, key2copy);
+	        CopyObjectResult copyResult = cosClient_dest.copyObject(copyObjectRequest);
+	        if(copyResult.getETag().equals(statObjectMeta.getETag())){
+	        	assert true;
+	        }else{
+	        	assert false;
+	        }
+	        
+	        //delete source object
+	        DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(sourceBucket, key);
+	        cosClient_source.deleteObject(deleteObjectRequest);
+	        
+	        //delete dest object 
+	        DeleteObjectRequest deleteObjectRequestDest = new DeleteObjectRequest(bucketName, key2copy);
+	        cosClient_dest.deleteObject(deleteObjectRequestDest);
+	        
+	        cosClient_source.shutdown();
+	        cosClient_dest.shutdown();
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
 	}
 	
 	/**
