@@ -11,9 +11,18 @@ import com.qcloud.cos.COSClient;
 import com.qcloud.cos.ClientConfig;
 import com.qcloud.cos.auth.BasicCOSCredentials;
 import com.qcloud.cos.auth.COSCredentials;
+import com.qcloud.cos.model.Bucket;
+import com.qcloud.cos.model.COSObjectSummary;
+import com.qcloud.cos.model.CannedAccessControlList;
+import com.qcloud.cos.model.CopyObjectRequest;
+import com.qcloud.cos.model.CopyObjectResult;
+import com.qcloud.cos.model.CreateBucketRequest;
+import com.qcloud.cos.model.DeleteBucketRequest;
 import com.qcloud.cos.model.DeleteObjectRequest;
 import com.qcloud.cos.model.GetObjectMetadataRequest;
 import com.qcloud.cos.model.GetObjectRequest;
+import com.qcloud.cos.model.ListObjectsRequest;
+import com.qcloud.cos.model.ObjectListing;
 import com.qcloud.cos.model.ObjectMetadata;
 import com.qcloud.cos.model.PutObjectRequest;
 import com.qcloud.cos.model.PutObjectResult;
@@ -33,7 +42,7 @@ public class TestFile {
     /**
      * upload/download/head/delete 256K file object
      */
-	@Test(invocationCount=6,threadPoolSize=3)
+	@Test(invocationCount=6,threadPoolSize=1)
 	public void test256KFile(){
 		try {
 	        COSCredentials cred = new BasicCOSCredentials(appid, secret_id, secret_key);
@@ -78,7 +87,7 @@ public class TestFile {
 	/**
      * upload/download/head/delete 4M file object
      */
-	@Test(invocationCount=6,threadPoolSize=3)
+	@Test(invocationCount=6,threadPoolSize=1)
 	public void test4MFile(){
 		try {
 	        COSCredentials cred = new BasicCOSCredentials(appid, secret_id, secret_key);
@@ -259,6 +268,69 @@ public class TestFile {
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
+	}
+	
+	/**
+	 * list objects(get bucket)
+	 */
+	@Test(invocationCount=1,threadPoolSize=1)
+	public void testListObjects(){
+		try{
+		   COSCredentials cred = new BasicCOSCredentials(appid, secret_id, secret_key);
+           ClientConfig clientConfig = new ClientConfig(new Region("cn-south"));
+           COSClient cosClient = new COSClient(cred, clientConfig);
+        
+           File directory = new File(localDirectory);
+           String prefix = "testList";
+           String suffix = ".txt";
+           File localFile = createSampleFile(prefix,suffix,directory,1024*1024);
+           String key = localFile.getName();
+           //upload object
+           PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, key, localFile);
+           PutObjectResult putObjectResult = cosClient.putObject(putObjectRequest);
+           localFile.deleteOnExit();
+        
+           ListObjectsRequest listObjectsRequest = new ListObjectsRequest().withBucketName(bucketName).withPrefix(prefix);
+		   ObjectListing objectListing = cosClient.listObjects(listObjectsRequest);
+		   for(COSObjectSummary objectSummary : objectListing.getObjectSummaries()){
+			   if(objectSummary.getKey().equals(key)){
+				   assert objectSummary.getETag().equals(putObjectResult.getETag());
+			   }
+			   
+		   };
+		   //delete object
+		   DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucketName, key);
+	       cosClient.deleteObject(deleteObjectRequest);
+	       
+		   cosClient.shutdown();
+		}catch(Exception e) {
+			// TODO: handle exception
+		}
+	}
+	
+	/**
+	 * create and delete bucket
+	 */
+	@Test(invocationCount=1,threadPoolSize=1)
+	public void testCreateAndDeleteBucket(){
+		try{
+			   COSCredentials cred = new BasicCOSCredentials(appid, secret_id, secret_key);
+	           ClientConfig clientConfig = new ClientConfig(new Region("cn-south"));
+	           COSClient cosClient = new COSClient(cred, clientConfig);
+	           //create bucket
+	           String bucketNameCreate = "bucketforcreate";
+	           CreateBucketRequest createBucketRequest = new CreateBucketRequest(bucketNameCreate);
+	           createBucketRequest.setCannedAcl(CannedAccessControlList.PublicReadWrite);
+	           Bucket created_bucket = cosClient.createBucket(createBucketRequest);
+	           System.out.println(created_bucket.getName());
+	           
+	           //delete bucket
+	           DeleteBucketRequest deleteBucketRequest = new DeleteBucketRequest(bucketNameCreate);
+	           cosClient.deleteBucket(deleteBucketRequest);
+	           cosClient.shutdown();
+			}catch(Exception e) {
+				// TODO: handle exception
+			}
 	}
 	
 	/**
