@@ -40,7 +40,6 @@ public class TestFile {
     Region region = new Region("cn-south");
     String sourceBucket = "burningeast";
     Region sourceRegion = new Region("cn-east");
-    String localDirectory = "E:\\test\\testcos\\";
 	
     /**
      * upload/download/head/delete 256K file object
@@ -51,7 +50,7 @@ public class TestFile {
 	        COSCredentials cred = new BasicCOSCredentials(appid, secret_id, secret_key);
 	        ClientConfig clientConfig = new ClientConfig(new Region("cn-south"));
 	        COSClient cosClient = new COSClient(cred, clientConfig);
-	        File directory = new File(localDirectory);
+	        File directory = new File(getLocalDirectory());
 	        String prefix = "cos256Kfile";
 	        String suffix = ".txt";
 	        File localFile = createSampleFile(prefix,suffix,directory,256*1024);
@@ -61,7 +60,7 @@ public class TestFile {
 	        PutObjectResult putObjectResult = cosClient.putObject(putObjectRequest);
 	        localFile.deleteOnExit();
 	        //download object
-	        File downFile = new File(localDirectory+localFile.getName()+"_download");
+	        File downFile = new File(getLocalDirectory()+localFile.getName()+"_download");
 	        GetObjectRequest getObjectRequest = new GetObjectRequest(bucketName, key);
 	        ObjectMetadata downObjectMeta = cosClient.getObject(getObjectRequest, downFile);
 	        downFile.deleteOnExit();
@@ -96,7 +95,7 @@ public class TestFile {
 	        COSCredentials cred = new BasicCOSCredentials(appid, secret_id, secret_key);
 	        ClientConfig clientConfig = new ClientConfig(new Region("cn-south"));
 	        COSClient cosClient = new COSClient(cred, clientConfig);
-	        File directory = new File(localDirectory);
+	        File directory = new File(getLocalDirectory());
 	        String prefix = "cos4Mfile";
 	        String suffix = ".txt";
 	        File localFile = createSampleFile(prefix,suffix,directory,4*1024*1024);
@@ -106,7 +105,7 @@ public class TestFile {
 	        PutObjectResult putObjectResult = cosClient.putObject(putObjectRequest);
 	        localFile.deleteOnExit();
 	        //download object
-	        File downFile = new File(localDirectory+localFile.getName()+"_download");
+	        File downFile = new File(getLocalDirectory()+localFile.getName()+"_download");
 	        GetObjectRequest getObjectRequest = new GetObjectRequest(bucketName, key);
 	        ObjectMetadata downObjectMeta = cosClient.getObject(getObjectRequest, downFile);
 	        downFile.deleteOnExit();
@@ -141,7 +140,7 @@ public class TestFile {
 	        COSCredentials cred = new BasicCOSCredentials(appid, secret_id, secret_key);
 	        ClientConfig clientConfig = new ClientConfig(new Region("cn-south"));
 	        COSClient cosClient = new COSClient(cred, clientConfig);
-	        File directory = new File(localDirectory);
+	        File directory = new File(getLocalDirectory());
 	        String prefix = "cos100Mfile";
 	        String suffix = ".txt";
 	        File localFile = createSampleFile(prefix,suffix,directory,100*1024*1024);
@@ -151,7 +150,7 @@ public class TestFile {
 	        PutObjectResult putObjectResult = cosClient.putObject(putObjectRequest);
 	        localFile.deleteOnExit();;
 	        //download object
-	        File downFile = new File(localDirectory+localFile.getName()+"_download");
+	        File downFile = new File(getLocalDirectory()+localFile.getName()+"_download");
 	        GetObjectRequest getObjectRequest = new GetObjectRequest(bucketName, key);
 	        ObjectMetadata downObjectMeta = cosClient.getObject(getObjectRequest, downFile);
 	        downFile.deleteOnExit();
@@ -186,7 +185,7 @@ public class TestFile {
 	        COSCredentials cred = new BasicCOSCredentials(appid, secret_id, secret_key);
 	        ClientConfig clientConfig = new ClientConfig(new Region("cn-south"));
 	        COSClient cosClient = new COSClient(cred, clientConfig);
-	        File directory = new File(localDirectory);
+	        File directory = new File(getLocalDirectory());
 	        String prefix = "cos1Gfile";
 	        String suffix = ".txt";
 	        File localFile = createSampleFile(prefix,suffix,directory,1024*1024*1024);
@@ -196,7 +195,7 @@ public class TestFile {
 	        PutObjectResult putObjectResult = cosClient.putObject(putObjectRequest);
 	        localFile.deleteOnExit();
 	        //download object
-	        File downFile = new File(localDirectory+localFile.getName()+"_download");
+	        File downFile = new File(getLocalDirectory()+localFile.getName()+"_download");
 	        GetObjectRequest getObjectRequest = new GetObjectRequest(bucketName, key);
 	        ObjectMetadata downObjectMeta = cosClient.getObject(getObjectRequest, downFile);
 	        downFile.deleteOnExit();
@@ -231,7 +230,7 @@ public class TestFile {
 	        COSCredentials cred = new BasicCOSCredentials(appid, secret_id, secret_key);
 	        ClientConfig clientConfig = new ClientConfig(new Region("cn-south"));
 	        COSClient cosClient = new COSClient(cred, clientConfig);
-	        File directory = new File(localDirectory);
+	        File directory = new File(getLocalDirectory());
 	        String prefix = "multipartfile";
 	        String suffix = ".txt";
 	        File localFile = createSampleFile(prefix,suffix,directory,100*1024*1024);
@@ -246,7 +245,7 @@ public class TestFile {
 //	        System.out.println(uploadResult.getETag());
 	        localFile.deleteOnExit();
 	        //download object
-	        File downFile = new File(localDirectory+localFile.getName()+"_download");
+	        File downFile = new File(getLocalDirectory()+localFile.getName()+"_download");
 	        GetObjectRequest getObjectRequest = new GetObjectRequest(bucketName, key);
 	        ObjectMetadata downObjectMeta = cosClient.getObject(getObjectRequest, downFile);
 //	        System.out.println(downObjectMeta.getETag());
@@ -283,7 +282,7 @@ public class TestFile {
            ClientConfig clientConfig = new ClientConfig(new Region("cn-south"));
            COSClient cosClient = new COSClient(cred, clientConfig);
         
-           File directory = new File(localDirectory);
+           File directory = new File(getLocalDirectory());
            String prefix = "testList";
            String suffix = ".txt";
            File localFile = createSampleFile(prefix,suffix,directory,1024*1024);
@@ -345,7 +344,7 @@ public class TestFile {
 	        COSCredentials cred = new BasicCOSCredentials(appid, secret_id, secret_key);
 	        ClientConfig clientConfig = new ClientConfig(new Region("cn-south"));
 	        COSClient cosClient = new COSClient(cred, clientConfig);
-	        File directory = new File(localDirectory);
+	        File directory = new File(getLocalDirectory());
 	        String prefix = "cosfileforcopy";
 	        String suffix = ".txt";
 	        File localFile = createSampleFile(prefix,suffix,directory,1*1024*1024);
@@ -403,7 +402,7 @@ public class TestFile {
 	        COSClient cosClient_source = new COSClient(cred, clientConfig_source);
 	        ClientConfig clientConfig_dest = new ClientConfig(region);
 	        COSClient cosClient_dest = new COSClient(cred, clientConfig_dest);
-	        File directory = new File(localDirectory);
+	        File directory = new File(getLocalDirectory());
 	        String prefix = "cosfileforcopy_sh_";
 	        String suffix = ".txt";
 	        File localFile = createSampleFile(prefix,suffix,directory,4*1024*1024);
@@ -445,6 +444,17 @@ public class TestFile {
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
+	}
+	
+	    /**
+     * get this project local directory
+     * @return
+     * @throws IOException
+     */
+	private static String getLocalDirectory() throws IOException{
+		File directory = new File("");// 参数为空
+		String courseFile = directory.getCanonicalPath();
+		return courseFile + "\\";
 	}
 	
 	/**
