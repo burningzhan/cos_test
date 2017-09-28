@@ -36,9 +36,9 @@ public class TestFile {
     String appid = "xxxxxxx";
     String secret_id = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
     String secret_key = "xxxxxxxxxxxxxxxxxxxxxxxxx";
-    String bucketName = "burningsouth";
+    String bucketName = "xxxxx";
     Region region = new Region("cn-south");
-    String sourceBucket = "burningeast";
+    String sourceBucket = "xxxxx";
     Region sourceRegion = new Region("cn-east");
 	
     /**
