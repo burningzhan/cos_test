@@ -33,9 +33,9 @@ import com.qcloud.cos.transfer.Upload;
 
 public class TestFile {
 	
-    String appid = "1251668577";
-    String secret_id = "AKIDrbAYjEBqqdEconpFi8NPFsOjrnX4LYUE";
-    String secret_key = "gCYjhT4ThiXAbp4aw65sTs56vY2Kcooc";
+    String appid = "xxxxxxx";
+    String secret_id = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+    String secret_key = "xxxxxxxxxxxxxxxxxxxxxxxxx";
     String bucketName = "burningsouth";
     Region region = new Region("cn-south");
     String sourceBucket = "burningeast";
